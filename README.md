@@ -22,7 +22,7 @@ python3 retrain.py \
  	--tfhub_module https://tfhub.dev/google/imagenet/inception_v3/feature_vector/3
 ``
 
-The image is then run through the model by using a call to the following script also aquired
+The image is then run through the model by using a call to the following script also acquired
 from [tensorflow's github](https://github.com/tensorflow/tensorflow/raw/master/tensorflow/examples/label_image/label_image.pyh):
 ``
 python label_image.py \
@@ -39,7 +39,7 @@ accomplished by retraining a image classification model with images of a clean a
 room and depending on the output of the analysis of the image a smart plug connected to
 the TV is turned on or off. 
 
-The idea was concieved by Matt Farley and his idea was posted here on [hackster.io](https://www.hackster.io/matt-farley/use-artificial-intelligence-to-detect-messy-clean-rooms-f224a2#toc-step-5---integrate-and-put-your-model-to-work-5)
+The idea was conceived by Matt Farley and his idea was posted here on [hackster.io](https://www.hackster.io/matt-farley/use-artificial-intelligence-to-detect-messy-clean-rooms-f224a2#toc-step-5---integrate-and-put-your-model-to-work-5)
 
 ## Implementation
 
@@ -56,13 +56,13 @@ of time.
 I used the python script `lots_of_pics.py` located in the base directory to get the pictures
 
 ### Train and test script
-The model retrained against the images produces values that indicate the likelyhood of the 
+The model retrained against the images produces values that indicate the likelihood of the 
 object in the image. 
 
 ### Results
 The models didn't seem to produce the results I was looking for. I tried retraining a few
 different models, but none of the other models I tried would successfully retrain on the
-device. Either the process ran out of memory or the process was killed by the kernal by a
+device. Either the process ran out of memory or the process was killed by the kernel by a
 reason I'm not sure of. 
 
 I don't know if there just wasn't enough images to produce a good
