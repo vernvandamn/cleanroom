@@ -1,3 +1,6 @@
 #Ignoring the picture directories to save the upload time
-/pics/messy/*
-/pics/clean/*
+pics/messy/*
+pics/clean/*
+# Ignoring the ML output due to size
+tensorflow/room.pb
+tensorflow/room.txt
