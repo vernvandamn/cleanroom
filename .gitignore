@@ -1,0 +1,3 @@
+#Ignoring the picture directories to save the upload time
+/pics/messy/*
+/pics/clean/*
