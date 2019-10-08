@@ -59,6 +59,22 @@ I used the python script `lots_of_pics.py` located in the base directory to get 
 The model retrained against the images produces values that indicate the likelyhood of the 
 object in the image. 
 
+### Results
+The models didn't seem to produce the results I was looking for. I tried retraining a few
+different models, but none of the other models I tried would successfully retrain on the
+device. Either the process ran out of memory or the process was killed by the kernal by a
+reason I'm not sure of. 
+
+I don't know if there just wasn't enough images to produce a good
+enough re-training set or if there were other issues with the subject that complicated the
+matter. The light differences in the room might have thrown of the values. Running the script
+on a bedroom where there might be more consistent lighting could help.
+
+The best results were obtained by placing a light on the floor that would turn on while the 
+image was obtained. The long shadows had a consistent effect on the clean value. The other
+values varied too much depending on the light in the room or the position of the debris to
+rely on. 
+
 ## Possible Paths Forward
 I could possibly break the image of the entire floor up into sections and running the 
 smaller sections against the classification model might produce better results. This would
