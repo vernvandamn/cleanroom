@@ -1,6 +1,10 @@
+#Ignoring swp files
+*.swp
 #Ignoring the picture directories to save the upload time
 pics/messy/*
 pics/clean/*
+pics-gray/messy/*
+pics-gray/clean/*
 # Ignoring the ML output due to size
-tensorflow/room.pb
-tensorflow/room.txt
+tensorflow/*.pb
+tensorflow/*.txt

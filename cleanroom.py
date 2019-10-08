@@ -7,7 +7,10 @@ import argparse
 
 # Set up command line args
 parser = argparse.ArgumentParser("Cleanliness Check")
-parser.add_argument("test", help="Cleanliness check example run is executed with clean image 0 or dirty 1", type=int)
+parser.add_argument("-t", "--test", help="Cleanliness check example run is executed with clean image 0 or dirty 1", type=int)
+parser.add_argument("-i", "--image", help="Specify the image to use", type=str)
+parser.add_argument("-o", "--once", help="Add this option to run the check just once", action='store_true')
+args = parser.parse_args()
 
 # Set up smartplug connection
 plug = SmartStrip("192.168.1.131")
@@ -23,7 +26,10 @@ def take_picture():
     # Get image
     return_value, image = cam.read()
     cam.release()
+    # Convert image to grayscale
+    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Save image
+    # cv2.imwrite('/home/learner/Cleanroom/current_state.jpg', gray)
     cv2.imwrite('/home/learner/Cleanroom/current_state.jpg', image)
     plug.turn_off(index=0)
 
@@ -37,12 +43,36 @@ def get_room_state():
     # Kernal kills my process when I try and redirect the stderr to 
     # /dev/null. Instead of messing with timeout limits I'll just let
     # it do it's thing.
+
+    # Init values
     messy = 0
     clean = 0
-    myCmd = 'python3 ./tensorflow/label_image.py --graph=./tensorflow/room.pb ' \
-            + '--labels=./tensorflow/room.txt --input_layer=Placeholder ' \
+    # Each of these commands represents different trained models that can be used
+    # to analyze the images
+
+    # First model, pictures colored
+    # myCmd = 'python3 ./tensorflow/label_image.py --graph=./tensorflow/room.pb ' \
+             # + '--labels=./tensorflow/room.txt --input_layer=Placeholder ' \
+             # + '--output_layer=final_result ' \
+             # + '--image=/home/learner/Cleanroom/current_state.jpg > out.txt'
+
+    # Grayscale images 
+    # myCmd = 'python3 ./tensorflow/label_image.py --graph=./tensorflow/gray.pb ' \
+            # + '--labels=./tensorflow/gray.txt --input_layer=Placeholder ' \
+            # + '--output_layer=final_result ' \
+            # + '--image=/home/learner/Cleanroom/current_state.jpg > out.txt'
+
+    # Dark images removed from clean directory and updated model used
+    myCmd = 'python3 ./tensorflow/label_image.py --graph=./tensorflow/room2.pb ' \
+            + '--labels=./tensorflow/room2.txt --input_layer=Placeholder ' \
             + '--output_layer=final_result ' \
             + '--image=/home/learner/Cleanroom/current_state.jpg > out.txt'
+
+    # Slightly messy room images removed from set
+    # myCmd = 'python3 ./tensorflow/label_image.py --graph=./tensorflow/refined.pb ' \
+            # + '--labels=./tensorflow/refined.txt --input_layer=Placeholder ' \
+            # + '--output_layer=final_result ' \
+            # + '--image=/home/learner/Cleanroom/current_state.jpg > out.txt'
     os.system(myCmd)
     with open("out.txt") as results:
         data = results.readlines()
@@ -58,15 +88,24 @@ def get_room_state():
 
 
 def roomcheck():
-    args = parser.parse_args()
-    if(args.test == 0):
+    '''
+    Checks the current state of the room. The current_state.jpg
+    file in the base directory is the imaged that is analyzed.
+    The smart plug is turned on or off based on the values.
+    '''
+    # Determine what image to used based on input args
+    if (args.image is not None):
+        cmd = 'cp -f ' + args.image + ' current_state.jpg'
+        os.system(cmd)
+    elif(args.test == 0):
         os.system('cp -f clean.jpg current_state.jpg')
-    else if(args.test == 1):
+    elif(args.test == 1):
         os.system('cp -f dirty.jpg current_state.jpg')
     else: 
         take_picture()
-
+    # Get the current room state
     messy, clean = get_room_state()
+    # Actuate TV based on results
     if messy > clean:
         print('Room messy turning OFF TV')
         plug.turn_off(index=1)
@@ -75,16 +114,13 @@ def roomcheck():
         plug.turn_on(index=1) 
     
 
-# Select schedule for checking the room
-# schedule.every(10).minutes.do(roomcheck)
-# schedule.every().day.at("10:30").do(roomcheck)
-# schedule.every(5).to(10).minutes.do(roomcheck)
-# schedule.every().monday.do(roomcheck) 
-# schedule.every().wednesday.at("13:15").do(roomcheck)  
-# schedule.every().minute.at(":17").do(roomcheck) 
-# schedule.every().hour.do(roomcheck)
-roomcheck()
-
-# This will run the scheduled roomcheck throughout the day.
-while True:                      
-    schedule.run_pending()
+# Determine if we should run just once or multiple times
+if(args.once == False):
+    # Set schedule for checking the room
+    print('Scheduled to run every hour')
+    schedule.every().hour.do(roomcheck)
+    # This will run the scheduled roomcheck throughout the day.
+    while True:                      
+        schedule.run_pending()
+else:
+    roomcheck()
