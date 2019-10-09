@@ -14,24 +14,24 @@ path to the picture(e.g. -i /home/learner/pics/image.jpg)
 
 If the tensorflow folder does not contain the necessary .pb or .txt files the model must be 
 retrained by using the following script(script was obtained from [github](https://github.com/tensorflow/hub/raw/r0.1/examples/image_retraining/retrain.py):
-``
+```
 python3 retrain.py \
 	--image_dir /home/learner/Cleanroom/pics \
  	--output_graph=room.pb \
  	--output_labels=room.txt \
  	--tfhub_module https://tfhub.dev/google/imagenet/inception_v3/feature_vector/3
-``
+```
 
 The image is then run through the model by using a call to the following script also acquired
 from [tensorflow's github](https://github.com/tensorflow/tensorflow/raw/master/tensorflow/examples/label_image/label_image.pyh):
-``
+```
 python label_image.py \
     --graph=rooms.pb \
     --labels=rooms.txt \
     --input_layer=Placeholder \
     --output_layer=final_result \
     --image=/path/to/new_image.jpg
-``
+```
 
 ## Idea
 The goal is to actuate a smartplug depending on the cleanliness of the room. This is to be
